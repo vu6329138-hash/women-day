@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chúc Mừng 20/10 - Kim Tuyền</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Canvas Confetti & FontAwesome -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Great+Vibes&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #050505;
+            color: #d4af37;
+            font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Gold Gradient Text & Elements */
+        .gold-text {
+            background: linear-gradient(135deg, #bf953f 0%, #fcf6ba 25%, #b38728 50%, #fbf5b7 75%, #aa771c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gold-border {
+            border-image: linear-gradient(to bottom right, #bf953f, #fcf6ba, #aa771c) 1;
+        }
+
+        .gold-glow {
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.3), inset 0 0 15px rgba(212, 175, 55, 0.2);
+        }
+
+        .font-royal {
+            font-family: 'Cinzel', serif;
+        }
+
+        .font-cursive {
+            font-family: 'Great Vibes', cursive;
+        }
+
+        /* Particles canvas background */
+        #starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* 3D Gift Box Styling */
+        .gift-container {
+            perspective: 1000px;
+        }
+
+        .gift-box {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            transform-style: preserve-3d;
+            transition: transform 0.6s ease;
+            cursor: pointer;
+        }
+
+        .gift-box:hover {
+            transform: rotateY(15deg) rotateX(10deg) scale(1.05);
+        }
+
+        .gift-side {
+            position: absolute;
+            width: 140px;
+            height: 140px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+            border: 2px solid #d4af37;
+            box-shadow: inset 0 0 15px rgba(212, 175, 55, 0.4);
+        }
+
+        .gift-front  { transform: translateZ(70px); }
+        .gift-back   { transform: rotateY(180deg) translateZ(70px); }
+        .gift-right  { transform: rotateY(90deg) translateZ(70px); }
+        .gift-left   { transform: rotateY(-90deg) translateZ(70px); }
+        .gift-top    { transform: rotateX(90deg) translateZ(70px); background: #222; }
+        .gift-bottom { transform: rotateX(-90deg) translateZ(70px); }
+
+        /* Ribbon */
+        .ribbon-v {
+            position: absolute;
+            left: 55px;
+            width: 30px;
+            height: 100%;
+            background: linear-gradient(to right, #bf953f, #fcf6ba, #aa771c);
+        }
+        .ribbon-h {
+            position: absolute;
+            top: 55px;
+            width: 100%;
+            height: 30px;
+            background: linear-gradient(to bottom, #bf953f, #fcf6ba, #aa771c);
+        }
+
+        .bow {
+            position: absolute;
+            top: -30px;
+            left: 35px;
+            width: 70px;
+            height: 40px;
+            background: linear-gradient(135deg, #fcf6ba, #aa771c);
+            border-radius: 50% 50% 0 0;
+            transform-style: preserve-3d;
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+        }
+
+        /* Pulse Animations */
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.4; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.05); }
+        }
+
+        .pulse-effect {
+            animation: pulseGlow 3s infinite ease-in-out;
+        }
+
+        /* Glassmorphism Card */
+        .glass-card {
+            background: rgba(15, 15, 15, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(212, 175, 55, 0.4);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #050505;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #d4af37;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 relative">
+
+    <!-- Canvas background for stars/glitter -->
+    <canvas id="starfield"></canvas>
+
+    <!-- Background Music Audio Element (Royalty Free Romantic Acoustic Piano) -->
+    <audio id="bgMusic" loop preload="auto">
+        <audio id="bgMusic" loop preload="auto">
+            <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=soft-piano-108842.mp3" type="audio/mpeg">
+        </audio>
+    </audio>
+
+    <!-- Music Control Button -->
+    <button id="musicToggle" onclick="toggleMusic()" class="fixed top-6 right-6 z-50 text-gold bg-black/60 border border-amber-500/50 p-3 rounded-full hover:bg-amber-500/20 transition-all duration-300 shadow-lg text-amber-400">
+        <i id="musicIcon" class="fas fa-music text-xl"></i>
+    </button>
+
+    <!-- STEP 1: GIFT BOX INTRO -->
+    <div id="giftSection" class="z-10 text-center flex flex-col items-center justify-center transition-all duration-700">
+        <div class="mb-8">
+            <h2 class="font-royal text-2xl md:text-3xl tracking-widest gold-text uppercase mb-2">Dành Riêng Cho</h2>
+            <h1 class="font-cursive text-5xl md:text-7xl gold-text py-2">Kim Tuyền</h1>
+            <p class="text-amber-200/70 text-sm tracking-wider mt-2 italic">Chạm vào hộp quà để mở thông điệp đặc biệt</p>
+        </div>
+
+        <div class="gift-container my-8" onclick="openGift()">
+            <div class="gift-box">
+                <div class="gift-side gift-front">
+                    <div class="ribbon-v"></div>
+                    <div class="ribbon-h"></div>
+                </div>
+                <div class="gift-side gift-back">
+                    <div class="ribbon-v"></div>
+                    <div class="ribbon-h"></div>
+                </div>
+                <div class="gift-side gift-right">
+                    <div class="ribbon-v"></div>
+                    <div class="ribbon-h"></div>
+                </div>
+                <div class="gift-side gift-left">
+                    <div class="ribbon-v"></div>
+                    <div class="ribbon-h"></div>
+                </div>
+                <div class="gift-side gift-top">
+                    <div class="ribbon-v"></div>
+                    <div class="ribbon-h"></div>
+                    <div class="bow"></div>
+                </div>
+                <div class="gift-side gift-bottom"></div>
+            </div>
+        </div>
+
+        <button onclick="openGift()" class="mt-6 px-8 py-3 rounded-full border border-amber-400/50 bg-black/50 text-amber-300 font-royal tracking-widest hover:bg-amber-500/20 hover:border-amber-400 transition-all duration-300 shadow-lg hover:shadow-amber-500/20 flex items-center gap-3">
+            <i class="fas fa-key text-xs"></i> MỞ THIỆP HOÀNG GIA
+        </button>
+    </div>
+
+    <!-- STEP 2: MAIN CARD (HIDDEN INITIALLY) -->
+    <div id="cardSection" class="hidden z-10 w-full max-w-2xl mx-auto my-8 opacity-0 transition-opacity duration-1000">
+        <div class="glass-card gold-glow rounded-2xl p-8 md:p-12 relative overflow-hidden border border-amber-500/30">
+            
+            <!-- Corner Decorative Elements -->
+            <div class="absolute top-3 left-3 text-amber-500/40 text-2xl font-serif">╔</div>
+            <div class="absolute top-3 right-3 text-amber-500/40 text-2xl font-serif">╗</div>
+            <div class="absolute bottom-3 left-3 text-amber-500/40 text-2xl font-serif">╚</div>
+            <div class="absolute bottom-3 right-3 text-amber-500/40 text-2xl font-serif">╝</div>
+
+            <!-- Card Header -->
+            <div class="text-center mb-8 border-b border-amber-500/20 pb-6">
+                <p class="font-royal text-xs md:text-sm tracking-[0.3em] text-amber-400/80 uppercase mb-2">Happy Vietnamese Women's Day</p>
+                <h1 class="font-royal text-3xl md:text-5xl font-bold gold-text tracking-wide mb-1">20 . 10</h1>
+                <p class="font-cursive text-3xl md:text-4xl text-amber-200 mt-2">Gửi Kim Tuyền,</p>
+            </div>
+
+            <!-- Typing Content Box -->
+            <div class="min-h-[220px] text-amber-100/90 leading-relaxed text-base md:text-lg font-light space-y-4 px-2">
+                <div id="typewriter" class="inline"></div><span id="cursor" class="inline-block w-2 h-5 bg-amber-400 ml-1 animate-pulse"></span>
+            </div>
+
+            <!-- Card Footer / Wish Details -->
+            <div id="cardFooter" class="opacity-0 transition-opacity duration-1000 mt-8 pt-6 border-t border-amber-500/20 text-center">
+                <div class="flex justify-center items-center gap-4 text-amber-400 mb-4">
+                    <i class="fas fa-crown text-xl"></i>
+                    <i class="fas fa-gem text-xl"></i>
+                    <i class="fas fa-heart text-xl"></i>
+                </div>
+                <p class="font-cursive text-2xl gold-text">Chúc Kim Tuyền luôn rạng rỡ & hạnh phúc!</p>
+                
+                <button onclick="triggerFireworks()" class="mt-6 px-6 py-2.5 rounded-full text-xs font-royal tracking-widest bg-gradient-to-r from-amber-600/40 to-yellow-600/40 border border-amber-400/60 text-amber-200 hover:from-amber-600/60 hover:to-yellow-600/60 transition-all duration-300">
+                    <i class="fas fa-sparkles mr-2"></i>BẮN PHÁO HOA
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Starfield Effect
+        const canvas = document.getElementById('starfield');
+        const ctx = canvas.getContext('2d');
+        let stars = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        for (let i = 0; i < 120; i++) {
+            stars.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: Math.random() * 2,
+                opacity: Math.random(),
+                speed: Math.random() * 0.02 + 0.005
+            });
+        }
+
+        function drawStars() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            stars.forEach(star => {
+                star.opacity += star.speed;
+                if (star.opacity > 1 || star.opacity < 0) {
+                    star.speed = -star.speed;
+                }
+                ctx.fillStyle = `rgba(212, 175, 55, ${Math.abs(star.opacity)})`;
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            requestAnimationFrame(drawStars);
+        }
+        drawStars();
+
+        // Music Control
+        const bgMusic = document.getElementById('bgMusic');
+        const musicIcon = document.getElementById('musicIcon');
+        let isPlaying = false;
+
+        function toggleMusic() {
+            if (isPlaying) {
+                bgMusic.pause();
+                musicIcon.className = "fas fa-music text-xl opacity-50";
+            } else {
+                bgMusic.play().catch(e => console.log("Audio play blocked by browser"));
+                musicIcon.className = "fas fa-compact-disc text-xl animate-spin text-amber-400";
+            }
+            isPlaying = !isPlaying;
+        }
+
+        // Open Gift Logic
+        function openGift() {
+            // Play Music automatically on click
+            if (!isPlaying) {
+                toggleMusic();
+            }
+
+            // Confetti Blast
+            triggerFireworks();
+
+            // Fade out gift section
+            const giftSection = document.getElementById('giftSection');
+            giftSection.style.opacity = '0';
+            giftSection.style.transform = 'scale(0.8)';
+            
+            setTimeout(() => {
+                giftSection.classList.add('hidden');
+                
+                // Show card section
+                const cardSection = document.getElementById('cardSection');
+                cardSection.classList.remove('hidden');
+                setTimeout(() => {
+                    cardSection.style.opacity = '1';
+                    startTypewriter();
+                }, 100);
+            }, 700);
+        }
+
+        // Typewriter Effect Text
+        const wishText = `Nhân ngày Phụ nữ Việt Nam 20/10, xin gửi đến Kim Tuyền những lời chúc tốt đẹp và quý giá nhất.\n\nChúc Kim Tuyền luôn giữ vững khí chất kiêu sa, vẻ đẹp sang trọng và nụ cười rạng rỡ rạng ngời như những ánh kim. Mong rằng hành trình phía trước của bạn luôn ngập tràn may mắn, thành công rực rỡ và luôn được trân trọng, yêu thương theo cách tuyệt vời nhất.`;
+
+        let textIndex = 0;
+        function startTypewriter() {
+            const container = document.getElementById('typewriter');
+            const cursor = document.getElementById('cursor');
+
+            function type() {
+                if (textIndex < wishText.length) {
+                    const char = wishText.charAt(textIndex);
+                    if (char === '\n') {
+                        container.innerHTML += '<br><br>';
+                    } else {
+                        container.innerHTML += char;
+                    }
+                    textIndex++;
+                    setTimeout(type, 45);
+                } else {
+                    cursor.style.display = 'none';
+                    // Reveal footer
+                    document.getElementById('cardFooter').classList.remove('opacity-0');
+                    // Extra fireworks loop
+                    launchRoyalFireworks();
+                }
+            }
+            type();
+        }
+
+        // Fireworks / Confetti Effects
+        function triggerFireworks() {
+            var count = 200;
+            var defaults = {
+                origin: { y: 0.7 }
+            };
+
+            function fire(particleRatio, opts) {
+                confetti(Object.assign({}, defaults, opts, {
+                    particleCount: Math.floor(count * particleRatio)
+                }));
+            }
+
+            fire(0.25, {
+                spread: 26,
+                startVelocity: 55,
+                colors: ['#bf953f', '#fcf6ba', '#b38728']
+            });
+            fire(0.2, {
+                spread: 60,
+                colors: ['#ffffff', '#d4af37']
+            });
+            fire(0.35, {
+                spread: 100,
+                decay: 0.91,
+                scalar: 0.8,
+                colors: ['#aa771c', '#fbf5b7', '#bf953f']
+            });
+            fire(0.1, {
+                spread: 120,
+                startVelocity: 25,
+                decay: 0.92,
+                colors: ['#ffffff', '#ffd700']
+            });
+            fire(0.1, {
+                spread: 120,
+                startVelocity: 45,
+                colors: ['#d4af37', '#b38728']
+            });
+        }
+
+        function launchRoyalFireworks() {
+            var duration = 3 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+
+                var particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }, colors: ['#bf953f', '#fcf6ba', '#d4af37'] }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }, colors: ['#ffffff', '#aa771c', '#ffd700'] }));
+            }, 250);
+        }
+    </script>
+</body>
+</html>
